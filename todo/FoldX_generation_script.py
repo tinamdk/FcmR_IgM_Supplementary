@@ -1,0 +1,7 @@
+foldx --command=AlaScan --pdb="./7YTC_FcuR.pdb" --output-dir="./output_AlaScan_7YTC_FcuR" --numberOfRuns=10 --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+foldx --command=AlaScan --pdb="./7YTD_FcuR.pdb" --output-dir="./output_AlaScan_7YTD_FcuR" --numberOfRuns=10 --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+foldx --command=AlaScan --pdb="./7YTE_FcuR.pdb" --output-dir="./output_AlaScan_7YTE_FcuR" --numberOfRuns=10 --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+foldx --command=AlaScan --pdb="./7YSG_FcuR.pdb" --output-dir="./output_AlaScan_7YSG_FcuR" --numberOfRuns=10 --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+foldx --command=AlaScan --pdb="./8BPE_FcuR.pdb" --output-dir="./output_AlaScan_8BPE_FcuR" --numberOfRuns=10 --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+foldx --command=AlaScan --pdb="./8BPF_FcuR.pdb" --output-dir="./output_AlaScan_8BPF_FcuR" --numberOfRuns=10 --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+foldx --command=AlaScan --pdb="./8BPG_FcuR.pdb" --output-dir="./output_AlaScan_8BPG_FcuR" --numberOfRuns=10 --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
