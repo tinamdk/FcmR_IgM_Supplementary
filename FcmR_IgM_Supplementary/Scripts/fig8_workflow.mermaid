@@ -1,0 +1,74 @@
+graph TD
+    Title["<b>FcµR–IgM recognition: structural, energetic & evolutionary integration</b>"]
+    Input["<b>Input</b> (7 complexes)<br>7YTE · 7YTC · 7YTD · 7YSG · 8BPE · 8BPF · 8BPG"]
+    Pipeline["<b>Four analytical pipelines</b>"]
+    P1["<b>Structure</b><br>Pairwise Cα RMSD 1.13–2.07 Å"]
+    P2["<b>Contacts</b><br>Core pairs: Arg45‑Leu466,<br>Thr60‑Arg467, Phe67‑Glu468,<br>Thr110‑Arg467/Leu466"]
+    P3["<b>Evolution</b><br>ConSurf · MAFFT<br>9 orthologs"]
+    P4["<b>Energetics</b><br>FoldX + PremPS<br>ΔΔG upon Ala substitution"]
+    Integration["<b>Multi‑criteria filtering</b>"]
+    Core["<b>Arg45 / Phe67</b><br>Core essential hotspots"]
+    Hierarchy["<b>Hotspot hierarchy</b>"]
+    H2["Predicted major:<br>Cys58, Gly107"]
+    H3["Structural supporting:<br>Thr60, Ser63, Thr110, Asp111"]
+    H4["Cooperative:<br>Lys69"]
+    H5["Experimental supporting:<br>Asn109, Arg112"]
+    Network["<b>Interaction network</b><br>Salt bridges: Arg45‑Glu468,<br>Lys69‑Glu526, Asp111‑Arg467<br>Hydrophobic: Phe67‑Glu468"]
+    Specificity["<b>Isotype specificity</b><br>IgM‑exclusive Cµ4 motif<br>(absent in IgA)"]
+    Model["<b>Unified mechanistic model</b>"]
+    M1["Lock‑and‑key on Cµ4<br>pre‑formed interface"]
+    M2["Stoichiometric plasticity<br>2∶1 mIgM · 4∶1 sIgM<br>≤8∶1 pIgM (epitope access)"]
+    M3["Specificity from<br>Cµ4 residue signature"]
+    M4["Therapeutic blueprint<br>autoimmunity & B‑cell cancers"]
+
+    Title --> Input
+    Input --> Pipeline
+    Pipeline --> P1
+    Pipeline --> P2
+    Pipeline --> P3
+    Pipeline --> P4
+    P1 --> Integration
+    P2 --> Integration
+    P3 --> Integration
+    P4 --> Integration
+    Integration --> Core
+    Integration --> Hierarchy
+    Integration --> Network
+    Integration --> Specificity
+    Hierarchy --> H2
+    Hierarchy --> H3
+    Hierarchy --> H4
+    Hierarchy --> H5
+    Core --> Model
+    H2 --> Model
+    H3 --> Model
+    H4 --> Model
+    H5 --> Model
+    Network --> Model
+    Specificity --> Model
+    Model --> M1
+    Model --> M2
+    Model --> M3
+    Model --> M4
+
+    style Title fill:#D6E4F0,color:#1A3A5C,stroke:#1A3A5C,stroke-width:2px,font-family:Arial
+    style Input fill:#E8F0F8,color:#1A3A5C,stroke:#7D9DB9,font-family:Arial
+    style Pipeline fill:#DCE6F1,color:#1A3A5C,stroke:#4A6A8A,stroke-width:2px,font-family:Arial
+    style P1 fill:#F2F7FC,color:#2B4A6E,stroke:#9EB8D2,font-family:Arial
+    style P2 fill:#F2F7FC,color:#2B4A6E,stroke:#9EB8D2,font-family:Arial
+    style P3 fill:#F2F7FC,color:#2B4A6E,stroke:#9EB8D2,font-family:Arial
+    style P4 fill:#F2F7FC,color:#2B4A6E,stroke:#9EB8D2,font-family:Arial
+    style Integration fill:#B8CCE4,color:#1A3A5C,stroke:#1A3A5C,stroke-width:2px,font-family:Arial
+    style Core fill:#F4CCCC,color:#8B1A1A,stroke:#8B1A1A,stroke-width:2px,font-family:Arial,font-weight:bold
+    style Hierarchy fill:#E2EFDA,color:#2D5A27,stroke:#4F8A44,stroke-width:1px,font-family:Arial
+    style H2 fill:#ECF5E4,color:#3B6E33,stroke:#82B366,font-family:Arial
+    style H3 fill:#ECF5E4,color:#3B6E33,stroke:#82B366,font-family:Arial
+    style H4 fill:#ECF5E4,color:#3B6E33,stroke:#82B366,font-family:Arial
+    style H5 fill:#ECF5E4,color:#3B6E33,stroke:#82B366,font-family:Arial
+    style Network fill:#FDE8D0,color:#8A4A1A,stroke:#C9874A,font-family:Arial
+    style Specificity fill:#EDE4D3,color:#6B4C2A,stroke:#B89A6B,font-family:Arial
+    style Model fill:#D6E4F0,color:#1A3A5C,stroke:#1A3A5C,stroke-width:2px,font-family:Arial
+    style M1 fill:#E8F0F8,color:#1A3A5C,stroke:#7D9DB9,font-family:Arial
+    style M2 fill:#E8F0F8,color:#1A3A5C,stroke:#7D9DB9,font-family:Arial
+    style M3 fill:#E8F0F8,color:#1A3A5C,stroke:#7D9DB9,font-family:Arial
+    style M4 fill:#E8F0F8,color:#1A3A5C,stroke:#7D9DB9,font-family:Arial
