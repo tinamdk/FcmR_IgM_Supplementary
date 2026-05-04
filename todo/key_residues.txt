@@ -1,3 +1,0 @@
-Residue	Frequency	Occurrence/Total
-45	0.591	13/22
-110	0.773	17/22
