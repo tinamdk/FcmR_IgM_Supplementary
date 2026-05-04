@@ -1,0 +1,16 @@
+# Executed on Windows with the following commands.
+# Full software path: C:\Users\...\foldx5Windows64_0\foldx_20251231.exe
+
+foldx_20251231.exe --command=AlaScan --pdb="./7YTC_FcuR.pdb" --numberOfRuns=10 --output-dir="./output_AlaScan_7YTC_FcuR" --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+
+foldx_20251231.exe --command=AlaScan --pdb="./7YTD_FcuR.pdb" --numberOfRuns=10 --output-dir="./output_AlaScan_7YTD_FcuR" --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+
+foldx_20251231.exe --command=AlaScan --pdb="./7YTE_FcuR.pdb" --numberOfRuns=10 --output-dir="./output_AlaScan_7YTE_FcuR" --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+
+foldx_20251231.exe --command=AlaScan --pdb="./7YSG_FcuR.pdb" --numberOfRuns=10 --output-dir="./output_AlaScan_7YSG_FcuR" --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+
+foldx_20251231.exe --command=AlaScan --pdb="./8BPE_FcuR.pdb" --numberOfRuns=10 --output-dir="./output_AlaScan_8BPE_FcuR" --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+
+foldx_20251231.exe --command=AlaScan --pdb="./8BPF_FcuR.pdb" --numberOfRuns=10 --output-dir="./output_AlaScan_8BPF_FcuR" --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
+
+foldx_20251231.exe --command=AlaScan --pdb="./8BPG_FcuR.pdb" --numberOfRuns=10 --output-dir="./output_AlaScan_8BPG_FcuR" --temperature=298 --pH=7.0 --ionStrength=0.05 --water=CRYSTAL --vdwDesign=2
