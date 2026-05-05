@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-FcμR与IgM接触分析脚本
-- 图4：FcμR数量效应热图，只显示最大比例>0.3的残基对（避免过长）
-- 完整数据保存为CSV，可作为补充材料
-- 其他图（1,2,3）保持不变
-"""
+
 
 import os
 import re
@@ -17,7 +12,7 @@ from Bio.PDB import PDBParser, NeighborSearch, is_aa
 from collections import defaultdict
 
 # ============================================================
-# 全局样式设置（JBSD 要求）
+# Global style settings
 # ============================================================
 plt.rcParams['font.family'] = 'Arial'
 plt.rcParams['font.size'] = 7
@@ -28,7 +23,7 @@ plt.rcParams['lines.linewidth'] = 0.5
 plt.rcParams['patch.linewidth'] = 0.5
 
 # ============================================================
-# 配置
+# Configuration
 # ============================================================
 PDB_IDS = ['7YTE', '7YTC', '7YTD', '7YSG', '8BPE', '8BPF', '8BPG']
 
@@ -67,7 +62,7 @@ DIFF_DIMER_VS_PENTAMER_CSV = os.path.join(OUTPUT_DIR, "source_data_dimer_vs_pent
 DIFF_SIGM_VS_PENTAMER_CSV = os.path.join(OUTPUT_DIR, "source_data_sIgM_vs_pentamer_diff.csv")
 THREE_GROUPS_CSV = os.path.join(OUTPUT_DIR, "source_data_fig3_three_groups.csv")
 
-# 分组
+# Grouping
 DIMER_PDBS = ['7YTE', '8BPG']
 PENTAMER_PDBS = ['7YTC', '7YTD', '8BPE', '8BPF']
 SIGM_PDBS = ['7YSG']
@@ -76,7 +71,7 @@ FCMUR4_PDBS = ['7YTD']
 FCMUR8_PDBS = ['8BPE']
 
 # ============================================================
-# 辅助函数（与原脚本相同）
+# Auxiliary function
 # ============================================================
 def force_format(name):
     if len(name) < 4:
@@ -153,7 +148,7 @@ def describe_group_diff(avg1, avg2):
     return results
 
 # ============================================================
-# 主程序
+# Main program
 # ============================================================
 def main():
     print("=" * 60)
@@ -187,7 +182,7 @@ def main():
         print("No contacts found. Exiting.")
         return
 
-    # 保存各PDB详细结果
+    # Save the detailed results of each PDB
     all_rows = []
     for pdb, frac in per_pdb_fractions.items():
         for (f, i), prop in frac.items():
@@ -215,7 +210,7 @@ def main():
                               cbar_kws={'label': 'Average contact proportion',
                                         'ticks': [0.5, 0.6, 0.7, 0.8, 0.9, 1.00]},
                               vmin=0.8, vmax=1.0, ax=ax, square=False)
-        # 黑色外框
+        # Black frame
         for spine in ax.spines.values():
             spine.set_visible(True)
             spine.set_color('black')
@@ -223,17 +218,17 @@ def main():
         rect = plt.Rectangle((0, 0), 1, 1, transform=ax.transAxes, fill=False, edgecolor='black', linewidth=2)
         ax.add_patch(rect)
 
-        ax.set_xlabel("IgM heavy constant μ residues", fontsize=18)
-        ax.set_ylabel("FcμR-D1 residues", fontsize=18)
+        ax.set_xlabel("IgM heavy constant μ residues", fontsize=12)
+        ax.set_ylabel("FcμR-D1 residues", fontsize=12)
 
-        # 增大横纵坐标刻度标签字体
-        plt.setp(ax.get_xticklabels(), rotation=45, ha='right', fontsize=14)
-        ax.tick_params(axis='y', labelsize=14)  # 纵坐标残基名称字体增大到14pt
 
-        # 增大右侧 colorbar 的标签和刻度字体
+        plt.setp(ax.get_xticklabels(), rotation=45, ha='right', fontsize=12)
+        ax.tick_params(axis='y', labelsize=12)
+
+
         cbar = heatmap.collections[0].colorbar
-        cbar.ax.set_ylabel('Average contact proportion', fontsize=14)  # colorbar 标签字体 12pt
-        cbar.ax.tick_params(labelsize=12)  # colorbar 刻度数字字体 10pt
+        cbar.ax.set_ylabel('Average contact proportion', fontsize=12)
+        cbar.ax.tick_params(labelsize=12)
 
         plt.tight_layout()
         plt.savefig(COMMON_HEATMAP_PNG, dpi=1200)
@@ -263,9 +258,9 @@ def main():
             for i in range(3):
                 stacks[total][i] += cnts[i]
 
-    fig, ax = plt.subplots(figsize=(9,6), dpi=1200)
+    fig, ax = plt.subplots(figsize=(8,6), dpi=1200)
     bottom = np.zeros(max_total)
-    bar_width = 0.7
+    bar_width = 0.6
     for i, name in enumerate(type_names):
         heights = [stacks[t][i] for t in range(1, max_total+1)]
         ax.bar(range(1, max_total+1), heights, bottom=bottom, label=name,
@@ -278,13 +273,13 @@ def main():
     for x in range(1, max_total+1):
         total_h = bottom[x-1]
         if total_h > 0:
-            ax.text(x,total_h+0.1, f"Total: {int(total_h)}", ha='center', va='bottom', fontsize=10)
-    ax.set_xlabel('Number of PDB complexes containing the residue pair (out of 7)', fontsize=16)
-    ax.set_ylabel('Number of residue pairs', fontsize=16)
+            ax.text(x,total_h+0.1, f"Total: {int(total_h)}", ha='center', va='bottom', fontsize=12)
+    ax.set_xlabel('Number of PDB complexes containing the residue pair (out of 7)', fontsize=12)
+    ax.set_ylabel('Number of residue pairs', fontsize=12)
     ax.set_xticks(range(1, max_total+1))
-    plt.setp(ax.get_xticklabels(), rotation=45, ha='right', fontsize=14)
-    ax.tick_params(axis='x', labelsize=14)
-    ax.tick_params(axis='y', labelsize=14)
+    plt.setp(ax.get_xticklabels(), rotation=45, ha='right', fontsize=12)
+    ax.tick_params(axis='x', labelsize=12)
+    ax.tick_params(axis='y', labelsize=12)
     ax.set_xticklabels([f'{i} complex(es)' for i in range(1, max_total+1)])
     ax.set_xlim(0.5, max_total+0.5)
     ax.legend(loc='upper left')
@@ -297,7 +292,7 @@ def main():
     print(f"Saved: {PERSISTENCE_STACKED_PNG} / {PERSISTENCE_STACKED_PDF}")
 
     # -------------------------
-    # 差异分析（二聚体 vs 五聚体，sIgM vs 五聚体）
+    # Differential analysis (dimer vs pentamer, sIgM vs pentamer)
     # -------------------------
     dimer_avg = compute_group_average(DIMER_PDBS, per_pdb_fractions)
     pentamer_avg = compute_group_average(PENTAMER_PDBS, per_pdb_fractions)
@@ -327,18 +322,18 @@ def main():
         pentamer_sorted = [pentamer_vals[i] for i in sorted_idx]
         sigm_sorted = [sigm_vals[i] for i in sorted_idx]
 
-        fig, ax = plt.subplots(figsize=(8,6), dpi=1200)
+        fig, ax = plt.subplots(figsize=(9,6), dpi=1200)
         x = np.arange(len(pairs_sorted))
         width = 0.25
         ax.bar(x-width, dimer_sorted, width, label='Dimer', color='#1f77b4', edgecolor='black')
         ax.bar(x, pentamer_sorted, width, label='Pentamer', color='#ff7f0e', edgecolor='black')
         ax.bar(x+width, sigm_sorted, width, label='sIgM', color='#2ca02c', edgecolor='black')
-        ax.set_ylabel('Contact proportion', fontsize=16)
-        ax.set_xlabel('Residue pair (FcμR-D1-Fcμ)', fontsize=16)
+        ax.set_ylabel('Contact proportion', fontsize=12)
+        ax.set_xlabel('Residue pair (FcμR-D1-Fcμ)', fontsize=13)
         ax.set_xticks(x)
-        ax.set_xticklabels(pairs_sorted, rotation=45, ha='right', fontsize=14)
-        ax.tick_params(axis='y', labelsize=14)
-        ax.legend(loc='center left', bbox_to_anchor=(1,0.5), fontsize=14)
+        ax.set_xticklabels(pairs_sorted, rotation=45, ha='right', fontsize=12)
+        ax.tick_params(axis='y', labelsize=12)
+        ax.legend(loc='center left', bbox_to_anchor=(1,0.5), fontsize=12)
         ax.set_ylim(0,1.05)
         ax.grid(axis='y', alpha=0.3)
         plt.subplots_adjust(left=0.08, bottom=0.25, right=0.80)
@@ -364,7 +359,7 @@ def main():
 
     all_pairs = set(fcmur1_avg.keys()) | set(fcmur4_avg.keys()) | set(fcmur8_avg.keys())
 
-    # 筛选：保留所有三个值均 > 0.0 的行
+    # Filtering: Keep only the rows where all three values are greater than 0.0
     MIN_THRESHOLD = 0.0
     keep_pairs = []
     for p in all_pairs:
@@ -407,7 +402,7 @@ def main():
         df_full.to_csv(FULL_HEATMAP_CSV)
         print(f"Saved full data (supplementary) to: {FULL_HEATMAP_CSV}")
 
-        # 图片尺寸（双栏 17.6 cm）
+        # Image size (two columns: 17.6 cm)
         fig_width_cm = 17.6
         fig_width_inch = fig_width_cm / 2.54
         n_rows = len(df_compare)
@@ -416,7 +411,7 @@ def main():
 
         fig, ax = plt.subplots(figsize=(fig_width_inch, fig_height_inch), dpi=1200)
 
-        # 动态 colorbar 高度，并固定 colorbar 范围 0.5~1.0 避免异常刻度
+        # Adjust the height of the colorbar dynamically and fix the range of the colorbar at 0.5 to 1.0 to avoid abnormal scales.
         shrink_val = 1.00
 
         heatmap = sns.heatmap(df_compare, annot=True, fmt=".2f", cmap='YlOrRd',
@@ -426,14 +421,14 @@ def main():
                                         'ticks': [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]},
                               linewidths=0.5, linecolor='lightgray', ax=ax)
 
-        # 增大 colorbar 的标签和刻度字体
-        cbar = heatmap.collections[0].colorbar
-        cbar.ax.set_ylabel('Contact proportion', fontsize=10)  # 标签字体 12pt
-        cbar.ax.tick_params(labelsize=10)  # 刻度数字字体 10pt
 
-        ax.set_title("", fontsize=12)
-        ax.set_ylabel("Residue pair (FcμR-Fcμ)", fontsize=12)
-        ax.set_xlabel("Number of FcμR-D1 chains", fontsize=12)
+        cbar = heatmap.collections[0].colorbar
+        cbar.ax.set_ylabel('Contact proportion', fontsize=10)
+        cbar.ax.tick_params(labelsize=10)
+
+        ax.set_title("", fontsize=10)
+        ax.set_ylabel("Residue pair (FcμR-Fcμ)", fontsize=10)
+        ax.set_xlabel("Number of FcμR-D1 chains", fontsize=10)
         ax.tick_params(axis='x', labelsize=10)
         plt.setp(ax.get_yticklabels(), rotation=0, ha='right', fontsize=10)
         plt.subplots_adjust(left=0.2)

@@ -85,11 +85,11 @@ sns.heatmap(
     annot_kws={'size': 8},
     ax=ax
 )
-ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=8)
-ax.set_yticklabels(labels, rotation=0, fontsize=8)
-ax.set_xlabel('PDB ID', fontsize=10)
-ax.set_ylabel('PDB ID', fontsize=10)
-ax.set_title('', fontweight='normal', fontsize=8)
+ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=7)
+ax.set_yticklabels(labels, rotation=0, fontsize=7)
+ax.set_xlabel('PDB ID', fontsize=7)
+ax.set_ylabel('PDB ID', fontsize=7)
+ax.set_title('', fontweight='normal', fontsize=7)
 plt.tight_layout()
 plt.savefig('fig1a_rmsd_heatmap.pdf', dpi=1200, bbox_inches='tight')
 plt.savefig('fig1a_rmsd_heatmap.png', dpi=1200, bbox_inches='tight')
