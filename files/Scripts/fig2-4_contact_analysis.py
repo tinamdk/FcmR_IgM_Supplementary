@@ -329,7 +329,7 @@ def main():
         ax.bar(x, pentamer_sorted, width, label='Pentamer', color='#ff7f0e', edgecolor='black')
         ax.bar(x+width, sigm_sorted, width, label='sIgM', color='#2ca02c', edgecolor='black')
         ax.set_ylabel('Contact proportion', fontsize=12)
-        ax.set_xlabel('Residue pair (FcμR-D1-Fcμ)', fontsize=13)
+        ax.set_xlabel('Residue pair (FcμR-D1-Fcμ)', fontsize=12)
         ax.set_xticks(x)
         ax.set_xticklabels(pairs_sorted, rotation=45, ha='right', fontsize=12)
         ax.tick_params(axis='y', labelsize=12)
