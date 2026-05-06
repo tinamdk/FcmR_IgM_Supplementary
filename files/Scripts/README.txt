@@ -41,5 +41,11 @@ To reproduce the analysis, download FoldX 5.0 (https://foldxsuite.crg.eu) and ru
 Each .fxout file contains per-mutation delta-delta-G values.
 Table 2 in the main text presents representative results from PDB 7YTC.
 
+### renumber_chains.py
+Pre-analysis renumbering of PDB chains, required before running FoldX AlaScan. Uses Biopython to assign unique residue identifiers across identical chains.
+Usage: python renumber_chains.py
+Input: PDB file in source_file/ directory.
+Output: Renumbered PDB file with unique residue identifiers.
+
 ## PDB Files
 PDB structures used in this study are publicly available from the RCSB Protein Data Bank (https://www.rcsb.org/) under accession codes 7YTE, 7YTC, 7YTD, 7YSG, 8BPE, 8BPF, and 8BPG. All scripts expect these files in a source_file/ subdirectory.
