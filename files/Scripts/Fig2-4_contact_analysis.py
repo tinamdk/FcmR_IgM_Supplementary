@@ -53,14 +53,14 @@ PERSISTENCE_STACKED_PNG = os.path.join(OUTPUT_DIR, "fig2b_stacked_bar.png")
 PERSISTENCE_STACKED_PDF = os.path.join(OUTPUT_DIR, "fig2b_stacked_bar.pdf")
 GROUP_COMPARE_HEATMAP_PNG = os.path.join(OUTPUT_DIR, "fig4_stoichiometry_heatmap.png")
 GROUP_COMPARE_HEATMAP_PDF = os.path.join(OUTPUT_DIR, "fig4_stoichiometry_heatmap.pdf")
-FULL_HEATMAP_CSV = os.path.join(OUTPUT_DIR, "source_data_fig4_stoichiometry_full.csv")   # 完整数据（补充材料）
+FULL_HEATMAP_CSV = os.path.join(OUTPUT_DIR, "source_data_Fig4_stoichiometry_full.csv")   # 完整数据（补充材料）
 THREE_GROUPS_BAR_PNG = os.path.join(OUTPUT_DIR, "fig3_three_groups_barplot.png")
 THREE_GROUPS_BAR_PDF = os.path.join(OUTPUT_DIR, "fig3_three_groups_barplot.pdf")
 
-PER_PDB_CSV = os.path.join(OUTPUT_DIR, "source_data_fig2-4_all_contacts.csv")
+PER_PDB_CSV = os.path.join(OUTPUT_DIR, "source_data_Fig2-4_all_contacts.csv")
 DIFF_DIMER_VS_PENTAMER_CSV = os.path.join(OUTPUT_DIR, "source_data_dimer_vs_pentamer_diff.csv")
 DIFF_SIGM_VS_PENTAMER_CSV = os.path.join(OUTPUT_DIR, "source_data_sIgM_vs_pentamer_diff.csv")
-THREE_GROUPS_CSV = os.path.join(OUTPUT_DIR, "source_data_fig3_three_groups.csv")
+THREE_GROUPS_CSV = os.path.join(OUTPUT_DIR, "source_data_Fig3_three_groups.csv")
 
 # Grouping
 DIMER_PDBS = ['7YTE', '8BPG']

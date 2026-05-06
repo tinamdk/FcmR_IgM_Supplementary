@@ -14,24 +14,24 @@ pip install numpy pandas matplotlib seaborn biopython mdanalysis
 
 ## Scripts
 
-### fig1a_rmsd_heatmap.py
+### Fig1A_rmsd_heatmap.py
 Generates the pairwise C-alpha RMSD heatmap (Fig. 1A).
 Usage: python fig1a_rmsd_heatmap.py
 Input: PDB files in source_file/ directory (7YTE, 7YTC, 7YTD, 7YSG, 8BPE, 8BPF, 8BPG).
 Output: fig1a_rmsd_heatmap.png and fig1a_rmsd_heatmap.pdf (1200 dpi).
 
-### fig2-4_contact_analysis.py
+### Fig2-4_contact_analysis.py
 Contact analysis script for Fig. 2-4. Computes residue-residue contact proportions across all seven FcµR-Fcµ complexes.
 Usage: python fig2-4_contact_analysis.py
 Input: PDB files in source_file/ directory.
 Output:
-- fig2a_contact_heatmap.png/pdf (Fig. 2A)
-- fig2b_stacked_bar.png/pdf (Fig. 2B)
-- fig3_three_groups_barplot.png/pdf (Fig. 3)
-- fig4_stoichiometry_heatmap.png/pdf (Fig. 4)
+- Fig2A_contact_heatmap.png/pdf (Fig. 2A)
+- fig2B_stacked_bar.png/pdf (Fig. 2B)
+- Fig3_three_groups_barplot.png/pdf (Fig. 3)
+- Fig4_stoichiometry_heatmap.png/pdf (Fig. 4)
 - Five source data CSV files written to ../Source_Data/
 
-### fig8_workflow.mmd
+### Fig8_workflow.mmd
 Mermaid source code for the integrated computational workflow (Fig. 8).
 Usage: Paste contents into https://mermaid.live/ and export as PDF.
 
