@@ -8,9 +8,14 @@ FOLDER STRUCTURE
 ================================================================================
 
 supplementary_information.pdf
-    Main supplementary document containing:
-    - Supplementary Table S1: Residue contacts per FcμR-D1 chain (≤ 5 Å)
-    - Supplementary Table S2: RMSD values of alanine mutants
+    Main supplementary document containing the table of contents and
+    descriptions of all supplementary files.
+
+supplementary_table_s1.xlsx
+    Supplementary Table S1: Residue contacts per FcμR-D1 chain (≤ 5 Å)
+
+supplementary_table_s2.xlsx
+    Supplementary Table S2: RMSD values of alanine mutants
 
 source_data/
     Raw data underlying the figures and analyses.
