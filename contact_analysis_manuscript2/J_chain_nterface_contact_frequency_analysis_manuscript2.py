@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+"""
+FcμR-IgM contact analysis with J chain and SC specificity
+- Original figures (2a, 2b, 3, 4) preserved
+- J chain analysis for pentamers (7YTC, 7YTD, 8BPE) and sIgM (7YSG)
+- New: FcμR–SC (secretory component) contact analysis for sIgM (7YSG)
+- Outputs: full contact CSVs, filtered heatmaps for pentamer J chain
+- All comments in English
+"""
 
 import os
 import re
@@ -12,7 +19,7 @@ from Bio.PDB import PDBParser, NeighborSearch, is_aa
 from collections import defaultdict
 
 # ============================================================
-# Global style settings
+# Global plot settings
 # ============================================================
 plt.rcParams['font.family'] = 'Arial'
 plt.rcParams['font.size'] = 7
@@ -30,13 +37,13 @@ PDB_IDS = ['7YTE', '7YTC', '7YTD', '7YSG', '8BPE', '8BPF', '8BPG']
 CHAIN_MAP = {
     "7YTE": {"file": "source_file/7YTE.pdb", "IgM": ["A", "B"], "FcμR": ["C", "D"]},
     "7YTC": {"file": "source_file/7YTC.pdb", "IgM": ["A", "B", "C", "D", "E", "F", "G", "H", "K", "L"],
-             "FcμR": ["R"]},
+             "FcμR": ["R"], "J_chain": ["J"]},
     "7YTD": {"file": "source_file/7YTD.pdb", "IgM": ["A", "B", "C", "D", "E", "F", "G", "H", "K", "L"],
-             "FcμR": ["R", "S", "U", "V"]},
+             "FcμR": ["R", "S", "U", "V"], "J_chain": ["J"]},
     "7YSG": {"file": "source_file/7YSG.pdb", "IgM": ["A", "B", "C", "D", "E", "F", "G", "H", "K", "L"],
-             "FcμR": ["U", "R", "S", "V"]},
+             "FcμR": ["U", "R", "S", "V"], "J_chain": ["J"], "SC": ["P"]},
     "8BPE": {"file": "source_file/8BPE.pdb", "IgM": ["A", "B", "C", "D", "E", "F", "G", "H", "K", "L"],
-             "FcμR": ["I", "M", "N", "O", "P", "Q", "R", "S"]},
+             "FcμR": ["I", "M", "N", "O", "P", "Q", "R", "S"], "J_chain": ["J"]},
     "8BPF": {"file": "source_file/8BPF.pdb", "IgM": ["A", "B", "C", "D", "E", "F", "G", "H", "K", "L"],
              "FcμR": ["I"]},
     "8BPG": {"file": "source_file/8BPG.pdb", "IgM": ["C", "D", "E", "F"], "FcμR": ["A", "B"]},
@@ -44,23 +51,33 @@ CHAIN_MAP = {
 
 DIST_CUTOFF = 4.5
 
-OUTPUT_DIR = "contact_analysis"
+OUTPUT_DIR = "contact_analysis_manuscript2"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-COMMON_HEATMAP_PNG = os.path.join(OUTPUT_DIR, "fig.2a.contact_heatmap.png")
-COMMON_HEATMAP_PDF = os.path.join(OUTPUT_DIR, "fig.2a.contact_heatmap.pdf")
+# Output paths for original figures and data
+COMMON_HEATMAP_PNG = os.path.join(OUTPUT_DIR, "fig2a_contact_heatmap.png")
+COMMON_HEATMAP_PDF = os.path.join(OUTPUT_DIR, "fig2a_contact_heatmap.pdf")
 PERSISTENCE_STACKED_PNG = os.path.join(OUTPUT_DIR, "fig2b_stacked_bar.png")
 PERSISTENCE_STACKED_PDF = os.path.join(OUTPUT_DIR, "fig2b_stacked_bar.pdf")
-GROUP_COMPARE_HEATMAP_PNG = os.path.join(OUTPUT_DIR, "fig4_stoichiometry_heatmap.png")
-GROUP_COMPARE_HEATMAP_PDF = os.path.join(OUTPUT_DIR, "fig4_stoichiometry_heatmap.pdf")
-FULL_HEATMAP_CSV = os.path.join(OUTPUT_DIR, "source_data_Fig4_stoichiometry_full.csv")   # 完整数据（补充材料）
+GROUP_COMPARE_HEATMAP_PNG = os.path.join(OUTPUT_DIR, "fig4a_stoichiometry_heatmap.png")
+GROUP_COMPARE_HEATMAP_PDF = os.path.join(OUTPUT_DIR, "fig4a_stoichiometry_heatmap.pdf")
+FULL_HEATMAP_CSV = os.path.join(OUTPUT_DIR, "source_data_fig4a_stoichiometry_full.csv")
 THREE_GROUPS_BAR_PNG = os.path.join(OUTPUT_DIR, "fig3_three_groups_barplot.png")
 THREE_GROUPS_BAR_PDF = os.path.join(OUTPUT_DIR, "fig3_three_groups_barplot.pdf")
 
-PER_PDB_CSV = os.path.join(OUTPUT_DIR, "source_data_Fig2-4_all_contacts.csv")
+PER_PDB_CSV = os.path.join(OUTPUT_DIR, "source_data_fig2-4_all_contacts.csv")
 DIFF_DIMER_VS_PENTAMER_CSV = os.path.join(OUTPUT_DIR, "source_data_dimer_vs_pentamer_diff.csv")
 DIFF_SIGM_VS_PENTAMER_CSV = os.path.join(OUTPUT_DIR, "source_data_sIgM_vs_pentamer_diff.csv")
-THREE_GROUPS_CSV = os.path.join(OUTPUT_DIR, "source_data_Fig3_three_groups.csv")
+THREE_GROUPS_CSV = os.path.join(OUTPUT_DIR, "source_data_fig3_three_groups.csv")
+
+# J chain analysis outputs
+J_PENTAMER_FULL_CSV = os.path.join(OUTPUT_DIR, "fig4b_pentamer_j_chain_all_contacts.csv")
+J_PENTAMER_HEATMAP_PNG = os.path.join(OUTPUT_DIR, "fig4b_pentamer_j_chain_heatmap.png")
+J_PENTAMER_HEATMAP_PDF = os.path.join(OUTPUT_DIR, "fig4b_pentamer_j_chain_heatmap.pdf")
+J_SIGM_CSV = os.path.join(OUTPUT_DIR, "fig4b_j_sIgM_contacts.csv")
+
+# New: SC chain analysis for sIgM
+J_SIGM_SC_CSV = os.path.join(OUTPUT_DIR, "sIgM_FcmuR_SC_contacts.csv")
 
 # Grouping
 DIMER_PDBS = ['7YTE', '8BPG']
@@ -71,9 +88,10 @@ FCMUR4_PDBS = ['7YTD']
 FCMUR8_PDBS = ['8BPE']
 
 # ============================================================
-# Auxiliary function
+# Helper functions
 # ============================================================
 def force_format(name):
+    """Format residue name + number, e.g., ARG123 -> Arg123"""
     if len(name) < 4:
         return name
     three = name[:3].capitalize()
@@ -81,12 +99,17 @@ def force_format(name):
     return f"{three}{num}"
 
 def get_sidechain_atoms(residue):
+    """Return sidechain atoms (for GLY, use CA as pseudo-sidechain)"""
     backbone = {'N', 'CA', 'C', 'O'}
     if residue.resname == 'GLY':
         return [atom for atom in residue.get_atoms() if atom.name == 'CA']
     return [atom for atom in residue.get_atoms() if atom.name not in backbone]
 
 def get_pair_participation_ratio(structure, fcmr_chains, igm_chains, cutoff):
+    """
+    Compute per-residue-pair contact proportion between FcμR D1 (18-124)
+    and any IgM chain (full length). Proportion normalized by number of FcμR chains.
+    """
     igm_atoms = []
     for ch in igm_chains:
         if ch in structure[0]:
@@ -126,9 +149,11 @@ def get_pair_participation_ratio(structure, fcmr_chains, igm_chains, cutoff):
     return fractions
 
 def extract_number(res_str):
+    """Extract residue number from formatted string, e.g., 'Arg123' -> 123"""
     return int(re.search(r'\d+', res_str).group())
 
 def compute_group_average(group_pdbs, per_pdb_fracs):
+    """Average contact proportions across a group of PDBs"""
     group_data = defaultdict(list)
     for pdb in group_pdbs:
         if pdb not in per_pdb_fracs:
@@ -139,6 +164,7 @@ def compute_group_average(group_pdbs, per_pdb_fracs):
     return avg
 
 def describe_group_diff(avg1, avg2):
+    """Compute per-pair difference between two group averages"""
     common = set(avg1.keys()) & set(avg2.keys())
     results = []
     for pair in common:
@@ -147,8 +173,98 @@ def describe_group_diff(avg1, avg2):
     results.sort(key=lambda x: abs(x[3]), reverse=True)
     return results
 
+def get_jchain_contacts(structure, fcmr_chains, jchain_chains, cutoff):
+    """
+    Compute contact proportion between FcμR D1 and J chain residues (full length).
+    Returns dict: {(FcμR_res, J_res): proportion}
+    """
+    jchain_atoms = []
+    for ch in jchain_chains:
+        if ch in structure[0]:
+            jchain_atoms.extend(structure[0][ch].get_atoms())
+    if not jchain_atoms:
+        return {}
+    ns = NeighborSearch(jchain_atoms)
+    total_fc_chains = 0
+    pair_count = defaultdict(int)
+    for ch_id in fcmr_chains:
+        if ch_id not in structure[0]:
+            continue
+        total_fc_chains += 1
+        chain_map = defaultdict(set)
+        for residue in structure[0][ch_id].get_residues():
+            if not is_aa(residue):
+                continue
+            if not (18 <= residue.id[1] <= 124):
+                continue
+            sidechain = get_sidechain_atoms(residue)
+            if not sidechain:
+                continue
+            fkey = force_format(f"{residue.resname}{residue.id[1]}")
+            for atom in sidechain:
+                nearby = ns.search(atom.coord, cutoff)
+                if nearby:
+                    for j_atom in nearby:
+                        j_res = j_atom.get_parent()
+                        if not is_aa(j_res):
+                            continue
+                        jkey = force_format(f"{j_res.resname}{j_res.id[1]}")
+                        chain_map[fkey].add(jkey)
+        for fkey, j_set in chain_map.items():
+            for jkey in j_set:
+                pair_count[(fkey, jkey)] += 1
+    if total_fc_chains == 0:
+        return {}
+    fractions = {pair: cnt / total_fc_chains for pair, cnt in pair_count.items()}
+    return fractions
+
+def get_fcmur_sc_contacts(structure, fcmr_chains, sc_chains, cutoff):
+    """
+    NEW: Compute contact proportion between FcμR D1 and secretory component (SC) chain P.
+    SC residues are taken full-length. Returns dict: {(FcμR_res, SC_res): proportion}
+    """
+    sc_atoms = []
+    for ch in sc_chains:
+        if ch in structure[0]:
+            sc_atoms.extend(structure[0][ch].get_atoms())
+    if not sc_atoms:
+        return {}
+    ns = NeighborSearch(sc_atoms)
+    total_fc_chains = 0
+    pair_count = defaultdict(int)
+    for ch_id in fcmr_chains:
+        if ch_id not in structure[0]:
+            continue
+        total_fc_chains += 1
+        chain_map = defaultdict(set)
+        for residue in structure[0][ch_id].get_residues():
+            if not is_aa(residue):
+                continue
+            if not (18 <= residue.id[1] <= 124):
+                continue
+            sidechain = get_sidechain_atoms(residue)
+            if not sidechain:
+                continue
+            fkey = force_format(f"{residue.resname}{residue.id[1]}")
+            for atom in sidechain:
+                nearby = ns.search(atom.coord, cutoff)
+                if nearby:
+                    for sc_atom in nearby:
+                        sc_res = sc_atom.get_parent()
+                        if not is_aa(sc_res):
+                            continue
+                        sckey = force_format(f"{sc_res.resname}{sc_res.id[1]}")
+                        chain_map[fkey].add(sckey)
+        for fkey, sc_set in chain_map.items():
+            for sckey in sc_set:
+                pair_count[(fkey, sckey)] += 1
+    if total_fc_chains == 0:
+        return {}
+    fractions = {pair: cnt / total_fc_chains for pair, cnt in pair_count.items()}
+    return fractions
+
 # ============================================================
-# Main program
+# Main analysis
 # ============================================================
 def main():
     print("=" * 60)
@@ -182,7 +298,7 @@ def main():
         print("No contacts found. Exiting.")
         return
 
-    # Save the detailed results of each PDB
+    # Save per-PDB contact details
     all_rows = []
     for pdb, frac in per_pdb_fractions.items():
         for (f, i), prop in frac.items():
@@ -191,7 +307,7 @@ def main():
     print(f"Saved per-PDB CSV: {PER_PDB_CSV}")
 
     # -------------------------
-    # fig. 2A High-frequency contacts heatmap
+    # Fig. 2A High-frequency contacts heatmap
     # -------------------------
     print("\n--- Heatmap of average contact proportion of high-frequency FcµR-IgM residue pairs ---")
     common_pairs = [p for p, v in pair_fractions.items() if len(v) == len(PDB_IDS)]
@@ -204,13 +320,12 @@ def main():
             mat[fc_res.index(f), igm_res.index(i)] = val
         df_common = pd.DataFrame(mat, index=fc_res, columns=igm_res)
 
-        fig, ax = plt.subplots(figsize=(10, 8), dpi=1200)
+        fig, ax = plt.subplots(figsize=(9, 8), dpi=1200)
         heatmap = sns.heatmap(df_common, annot=True, fmt=".2f", cmap='Reds', mask=df_common.isna(),
                               linewidths=0.5,
                               cbar_kws={'label': 'Average contact proportion',
                                         'ticks': [0.5, 0.6, 0.7, 0.8, 0.9, 1.00]},
                               vmin=0.8, vmax=1.0, ax=ax, square=False)
-        # Black frame
         for spine in ax.spines.values():
             spine.set_visible(True)
             spine.set_color('black')
@@ -220,12 +335,8 @@ def main():
 
         ax.set_xlabel("IgM heavy constant μ residues", fontsize=12)
         ax.set_ylabel("FcμR-D1 residues", fontsize=12)
-
-
         plt.setp(ax.get_xticklabels(), rotation=45, ha='right', fontsize=12)
         ax.tick_params(axis='y', labelsize=12)
-
-
         cbar = heatmap.collections[0].colorbar
         cbar.ax.set_ylabel('Average contact proportion', fontsize=12)
         cbar.ax.tick_params(labelsize=12)
@@ -239,7 +350,7 @@ def main():
         print("No common pairs found.")
 
     # -------------------------
-    # fig. 2B (Oligomer selectivity stacked bar chart)）
+    # Fig. 2B Stacked bar
     # -------------------------
     print("\n--- Fig. 2B (Oligomer selectivity stacked bar)")
     type_groups = [DIMER_PDBS, PENTAMER_PDBS, SIGM_PDBS]
@@ -268,7 +379,7 @@ def main():
         for j, (h,b) in enumerate(zip(heights, bottom)):
             if h>0:
                 ax.text(j+1, b+h/2, f"{name[:1]}:{int(h)}", ha='center', va='center',
-                        fontsize=8, color='white', fontweight='bold')
+                        fontsize=10, color='white', fontweight='bold')
         bottom += heights
     for x in range(1, max_total+1):
         total_h = bottom[x-1]
@@ -292,7 +403,7 @@ def main():
     print(f"Saved: {PERSISTENCE_STACKED_PNG} / {PERSISTENCE_STACKED_PDF}")
 
     # -------------------------
-    # Differential analysis (dimer vs pentamer, sIgM vs pentamer)
+    # Differential analysis
     # -------------------------
     dimer_avg = compute_group_average(DIMER_PDBS, per_pdb_fractions)
     pentamer_avg = compute_group_average(PENTAMER_PDBS, per_pdb_fractions)
@@ -305,9 +416,9 @@ def main():
     print("Saved differential CSVs.")
 
     # -------------------------
-    # fig. 3 (Oligomer-dependent modulation bar chart)
+    # Fig. 3 Bar chart
     # -------------------------
-    print("\n--- Fig. 3. Contact proportions of shared FcµR-Fcμ interfacial residue pairs differ across dimeric, pentameric and sIgM")
+    print("\n--- Fig. 3. Contact proportions of shared FcµR-Fcμ interfacial residue pairs")
     common_pairs_15 = [p for p,v in pair_fractions.items() if len(v)==len(PDB_IDS)]
     if common_pairs_15:
         pairs_list, dimer_vals, pentamer_vals, sigm_vals = [], [], [], []
@@ -347,10 +458,10 @@ def main():
         print("No common pairs for three-group bar plot.")
 
     # -------------------------
-    # fig. 4 (Stoichiometry effect heatmap)
+    # Fig. 4A Stoichiometry heatmap
+    # -------------------------
     print("\n" + "=" * 60)
-    print("Fig. 4. Hierarchical contact patterns under increasing FcµR stoichiometry")
-    print("(Pairs with all proportions > 0.0 are shown, to exclude very low values)")
+    print("Fig. 4A. Hierarchical contact patterns under increasing FcµR stoichiometry")
     print("=" * 60)
 
     fcmur1_avg = compute_group_average(FCMUR1_PDBS, per_pdb_fractions)
@@ -358,8 +469,6 @@ def main():
     fcmur8_avg = compute_group_average(FCMUR8_PDBS, per_pdb_fractions)
 
     all_pairs = set(fcmur1_avg.keys()) | set(fcmur4_avg.keys()) | set(fcmur8_avg.keys())
-
-    # Filtering: Keep only the rows where all three values are greater than 0.0
     MIN_THRESHOLD = 0.0
     keep_pairs = []
     for p in all_pairs:
@@ -368,28 +477,21 @@ def main():
         v8 = fcmur8_avg.get(p, 0)
         if v1 > MIN_THRESHOLD and v4 > MIN_THRESHOLD and v8 > MIN_THRESHOLD:
             keep_pairs.append(p)
-
     if not keep_pairs:
         print(f"Warning: No pairs with all proportions > {MIN_THRESHOLD}. Using pairs with max > 0.9 instead.")
         for p in all_pairs:
             if max(fcmur1_avg.get(p, 0), fcmur4_avg.get(p, 0), fcmur8_avg.get(p, 0)) > 0.9:
                 keep_pairs.append(p)
-
     keep_pairs.sort(key=lambda p: fcmur8_avg.get(p, 0), reverse=True)
-
     data_matrix = []
     index_labels = []
     for p in keep_pairs:
         data_matrix.append([fcmur1_avg.get(p, 0), fcmur4_avg.get(p, 0), fcmur8_avg.get(p, 0)])
         index_labels.append(f"{p[0]}-{p[1]}")
-
     if not data_matrix:
         print("No residue pairs meet the criteria. Skipping Figure 4.")
     else:
-        df_compare = pd.DataFrame(data_matrix, index=index_labels,
-                                  columns=['1 FcμR', '4 FcμR', '8 FcμR'])
-
-
+        df_compare = pd.DataFrame(data_matrix, index=index_labels, columns=['1 FcμR', '4 FcμR', '8 FcμR'])
         full_pairs = sorted(all_pairs,
                             key=lambda p: max(fcmur1_avg.get(p, 0), fcmur4_avg.get(p, 0), fcmur8_avg.get(p, 0)),
                             reverse=True)
@@ -398,45 +500,195 @@ def main():
             full_data.append([fcmur1_avg.get(p, 0), fcmur4_avg.get(p, 0), fcmur8_avg.get(p, 0)])
         df_full = pd.DataFrame(full_data, index=[f"{p[0]}-{p[1]}" for p in full_pairs],
                                columns=['1 FcμR', '4 FcμR', '8 FcμR'])
-        #FULL_HEATMAP_CSV = os.path.join(OUTPUT_DIR, "FcμR_number_heatmap_full.csv")
         df_full.to_csv(FULL_HEATMAP_CSV)
         print(f"Saved full data (supplementary) to: {FULL_HEATMAP_CSV}")
 
-        # Image size (two columns: 17.6 cm)
         fig_width_cm = 17.6
         fig_width_inch = fig_width_cm / 2.54
         n_rows = len(df_compare)
         row_height_inch = 0.3
         fig_height_inch = max(3.0, n_rows * row_height_inch)
-
         fig, ax = plt.subplots(figsize=(fig_width_inch, fig_height_inch), dpi=1200)
-
-        # Adjust the height of the colorbar dynamically and fix the range of the colorbar at 0.5 to 1.0 to avoid abnormal scales.
-        shrink_val = 1.00
-
         heatmap = sns.heatmap(df_compare, annot=True, fmt=".2f", cmap='YlOrRd',
-                              annot_kws={'size': 10},
-                              vmin=0.5, vmax=1.0,
-                              cbar_kws={'label': 'Contact proportion', 'shrink': shrink_val, 'aspect': 30,
+                              annot_kws={'size': 10}, vmin=0.5, vmax=1.0,
+                              cbar_kws={'label': 'Contact proportion', 'shrink': 1.0, 'aspect': 30,
                                         'ticks': [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]},
                               linewidths=0.5, linecolor='lightgray', ax=ax)
-
-
         cbar = heatmap.collections[0].colorbar
         cbar.ax.set_ylabel('Contact proportion', fontsize=10)
         cbar.ax.tick_params(labelsize=10)
-
-        ax.set_title("", fontsize=10)
         ax.set_ylabel("Residue pair (FcμR-Fcμ)", fontsize=10)
         ax.set_xlabel("Number of FcμR-D1 chains", fontsize=10)
         ax.tick_params(axis='x', labelsize=10)
         plt.setp(ax.get_yticklabels(), rotation=0, ha='right', fontsize=10)
         plt.subplots_adjust(left=0.2)
-
         plt.tight_layout()
         plt.savefig(GROUP_COMPARE_HEATMAP_PNG, dpi=1200)
         plt.savefig(GROUP_COMPARE_HEATMAP_PDF, dpi=1200)
         plt.close()
         print(f"Saved heatmap with {n_rows} pairs (all proportions > {MIN_THRESHOLD}).")
+
+    # ============================================================
+    # Fig. 4B J chain specific analysis (pentamers vs sIgM)
+    # ============================================================
+    print("\n" + "=" * 60)
+    print("J chain specific analysis: J chain - FcμR contacts")
+    print("Pentamer (7YTC,7YTD,8BPE) vs sIgM (7YSG)")
+    print("=" * 60)
+
+    fig_width_cm = 17.6
+    fig_width_inch = fig_width_cm / 2.54
+
+    # Pentamer PDBs and their FcμR counts
+    J_PENTAMER_PDBS = {
+        '7YTC': 1,
+        '7YTD': 4,
+        '8BPE': 8,
+    }
+    J_SIGM_PDB = '7YSG'
+
+    # Compute J chain contacts for pentamers
+    j_pentamer_contacts = {}
+    for pdb, n_fcmur in J_PENTAMER_PDBS.items():
+        entry = CHAIN_MAP.get(pdb)
+        if not entry or 'J_chain' not in entry:
+            print(f"  Skip {pdb}: no J_chain defined")
+            continue
+        if not os.path.exists(entry['file']):
+            print(f"  File not found: {entry['file']}")
+            continue
+        parser = PDBParser(QUIET=True)
+        struct = parser.get_structure(pdb, entry['file'])
+        fractions = get_jchain_contacts(struct, entry['FcμR'], entry['J_chain'], DIST_CUTOFF)
+        j_pentamer_contacts[pdb] = fractions
+        print(f"  {pdb} (FcμR={n_fcmur}) -> {len(fractions)} contacts")
+
+    # Compute J chain contacts for sIgM
+    j_sigm_contacts = {}
+    entry = CHAIN_MAP.get(J_SIGM_PDB)
+    if entry and 'J_chain' in entry and os.path.exists(entry['file']):
+        parser = PDBParser(QUIET=True)
+        struct = parser.get_structure(J_SIGM_PDB, entry['file'])
+        fractions = get_jchain_contacts(struct, entry['FcμR'], entry['J_chain'], DIST_CUTOFF)
+        j_sigm_contacts[J_SIGM_PDB] = fractions
+        print(f"  {J_SIGM_PDB} (sIgM) -> {len(fractions)} contacts")
+    else:
+        print(f"  Warning: {J_SIGM_PDB} not found or missing J_chain")
+
+    # Save pentamer full J chain contacts (no filtering)
+    pentamer_all_rows = []
+    for pdb, frac in j_pentamer_contacts.items():
+        for (fcmur_res, j_res), prop in frac.items():
+            pentamer_all_rows.append({'PDB': pdb, 'FcμR_residue': fcmur_res, 'J_chain_residue': j_res, 'proportion': prop})
+    if pentamer_all_rows:
+        pd.DataFrame(pentamer_all_rows).to_csv(J_PENTAMER_FULL_CSV, index=False)
+        print(f"Saved pentamer full contacts: {J_PENTAMER_FULL_CSV}")
+
+    # Average by FcμR stoichiometry for pentamers
+    j_group1 = [pdb for pdb, n in J_PENTAMER_PDBS.items() if n == 1]   # ['7YTC']
+    j_group4 = [pdb for pdb, n in J_PENTAMER_PDBS.items() if n == 4]   # ['7YTD']
+    j_group8 = [pdb for pdb, n in J_PENTAMER_PDBS.items() if n == 8]   # ['8BPE']
+
+    j_avg1 = compute_group_average(j_group1, j_pentamer_contacts)
+    j_avg4 = compute_group_average(j_group4, j_pentamer_contacts)
+    j_avg8 = compute_group_average(j_group8, j_pentamer_contacts)
+
+    j_all_pairs = set(j_avg1.keys()) | set(j_avg4.keys()) | set(j_avg8.keys())
+
+    # Filter for heatmap: keep pairs with max proportion > 0.3
+    J_HEATMAP_THRESHOLD = 0.3
+    j_keep_pairs = []
+    for p in j_all_pairs:
+        v1 = j_avg1.get(p, 0)
+        v4 = j_avg4.get(p, 0)
+        v8 = j_avg8.get(p, 0)
+        if max(v1, v4, v8) > J_HEATMAP_THRESHOLD:
+            j_keep_pairs.append(p)
+    j_keep_pairs.sort(key=lambda p: j_avg8.get(p, 0), reverse=True)
+
+    if j_keep_pairs:
+        j_data_matrix = []
+        j_index_labels = []
+        for p in j_keep_pairs:
+            j_data_matrix.append([j_avg1.get(p, 0), j_avg4.get(p, 0), j_avg8.get(p, 0)])
+            j_index_labels.append(f"{p[0]}-{p[1]}")
+        df_j_compare = pd.DataFrame(j_data_matrix, index=j_index_labels,
+                                    columns=['1 FcμR', '4 FcμR', '8 FcμR'])
+
+        # Save filtered data for heatmap
+        j_heatmap_csv = os.path.join(OUTPUT_DIR, "source_data_fig4b_pentamer_j_chain_stoichiometry.csv")
+        df_j_compare.to_csv(j_heatmap_csv)
+        print(f"Saved filtered data for heatmap (max > {J_HEATMAP_THRESHOLD}): {j_heatmap_csv}")
+
+        # Plot heatmap
+        fig_width_cm = 17.6
+        fig_width_inch = fig_width_cm / 2.54
+        n_rows = len(df_j_compare)
+        row_height_inch = 0.3
+        fig_height_inch = max(3.0, n_rows * row_height_inch)
+
+        fig, ax = plt.subplots(figsize=(fig_width_inch, fig_height_inch), dpi=1200)
+        heatmap = sns.heatmap(df_j_compare, annot=True, fmt=".2f", cmap='YlOrRd',
+                              annot_kws={'size': 10},
+                              vmin=0.5, vmax=1.0,
+                              cbar_kws={'label': 'Contact proportion', 'shrink': 1.0, 'aspect': 30,
+                                        'ticks': [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]},
+                              linewidths=0.5, linecolor='lightgray', ax=ax)
+        cbar = heatmap.collections[0].colorbar
+        cbar.ax.set_ylabel('Contact proportion', fontsize=10)
+        cbar.ax.tick_params(labelsize=10)
+        ax.set_ylabel("Residue pair (FcμR - J)", fontsize=10)
+        ax.set_xlabel("Number of FcμR-D1 chains", fontsize=10)
+        ax.tick_params(axis='x', labelsize=10)
+        plt.setp(ax.get_yticklabels(), rotation=0, ha='right', fontsize=10)
+        plt.subplots_adjust(left=0.2)
+        plt.tight_layout()
+        plt.savefig(J_PENTAMER_HEATMAP_PNG, dpi=1200)
+        plt.savefig(J_PENTAMER_HEATMAP_PDF, dpi=1200)
+        plt.close()
+        print(f"Saved pentamer stoichiometry heatmap ({n_rows} pairs, max > {J_HEATMAP_THRESHOLD}).")
+    else:
+        print("No pentamer J-chain pairs exceed threshold for heatmap.")
+
+    # Save sIgM J chain contacts (all)
+    if j_sigm_contacts:
+        sigm_rows = []
+        for pdb, frac in j_sigm_contacts.items():
+            for (fcmur_res, j_res), prop in frac.items():
+                sigm_rows.append({'PDB': pdb, 'FcμR_residue': fcmur_res, 'J_chain_residue': j_res, 'proportion': prop})
+        pd.DataFrame(sigm_rows).to_csv(J_SIGM_CSV, index=False)
+        print(f"Saved sIgM J-chain contacts (all): {J_SIGM_CSV}")
+    else:
+        print("No sIgM J-chain contacts found.")
+
+    # ============================================================
+    # NEW: FcμR – SC (secretory component) analysis for sIgM only
+    # ============================================================
+    print("\n" + "=" * 60)
+    print("FcμR – SC (secretory component) contact analysis for sIgM (7YSG)")
+    print("=" * 60)
+
+    sc_contacts = {}
+    entry = CHAIN_MAP.get(J_SIGM_PDB)
+    if entry and 'SC' in entry and os.path.exists(entry['file']):
+        parser = PDBParser(QUIET=True)
+        struct = parser.get_structure(J_SIGM_PDB, entry['file'])
+        fractions = get_fcmur_sc_contacts(struct, entry['FcμR'], entry['SC'], DIST_CUTOFF)
+        sc_contacts[J_SIGM_PDB] = fractions
+        print(f"  {J_SIGM_PDB} (sIgM) FcμR–SC -> {len(fractions)} contacts")
+    else:
+        print(f"  Warning: {J_SIGM_PDB} SC chain not defined or file missing.")
+
+    # Save all FcμR–SC contacts for sIgM
+    if sc_contacts:
+        sc_rows = []
+        for pdb, frac in sc_contacts.items():
+            for (fcmur_res, sc_res), prop in frac.items():
+                sc_rows.append({'PDB': pdb, 'FcμR_residue': fcmur_res, 'SC_residue': sc_res, 'proportion': prop})
+        pd.DataFrame(sc_rows).to_csv(J_SIGM_SC_CSV, index=False)
+        print(f"Saved sIgM FcμR–SC contacts (all): {J_SIGM_SC_CSV}")
+    else:
+        print("No FcμR–SC contacts found for sIgM.")
+
 if __name__ == "__main__":
     main()
