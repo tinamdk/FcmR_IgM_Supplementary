@@ -67,6 +67,9 @@ figures/
     - fig1a.pdf
       Pairwise C-alpha RMSD heatmap and structural superposition (Fig. 1)
 
+    - fig1b.pdf
+    Structural superposition aligned on the FcµR-D1 chain (Fig. 1B)
+
     - fig2a.pdf
       High-frequency contact heatmap (Fig. 2A)
 
@@ -82,8 +85,41 @@ figures/
     - fig4b.pdf
       Pentameric J-chain stoichiometry heatmap (Fig. 4B)
 
-    - fig6.pdf
-      Evolutionary conservation analysis (Fig. 6)
+    - fig5a.pdf
+      ConSurf conservation grade of FcµR (Fig. 5A)
+
+    - fig5b.pdf
+      Domain organization of FcµR (Fig. 5B)
+
+    - fig5c.pdf
+      Conservation scores mapped on FcµR-D1 (Fig. 5C)
+
+    - fig6a.pdf
+      Multiple ortholog alignment across nine mammalian species (Fig. 6A)
+
+    - fig6b.pdf
+      Hierarchical MAFFT CLUSTAL phylogenetic tree (Fig. 6B)
+
+    - fig7a.pdf
+      Overview of the FcμR-D1–Cμ4 crystal complex (Fig. 7A)
+
+    - fig7b.pdf
+      Arg45-Glu468 ion pair and Phe67-Glu468 hydrophobic packing (Fig. 7B)
+
+    - fig7c.pdf
+      Lys69-Glu526 ion pair and Asp111-Arg467 ion pair (Fig. 7C)
+
+    - fig7d.pdf
+      Thr60-Arg467 and Ser63-Glu468 hydrogen bonds (Fig. 7D)
+
+    - fig7e.pdf
+      Thr110-Arg467 hydrogen bond (Fig. 7E)
+
+    - fig7f.pdf
+      FcµR-D1 high-contact residue pairs with the C-terminal region of the J-chain (Fig. 7F)
+
+    - fig7g.pdf
+      FcµR-D1 molecules (R1′–R4′) bound to sIgM, opposite the SC (Fig. 7G)
 
     - fig8.pdf
       Integrated computational workflow (Fig. 8)
