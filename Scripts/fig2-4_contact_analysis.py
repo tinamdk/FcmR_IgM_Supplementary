@@ -51,7 +51,7 @@ CHAIN_MAP = {
 
 DIST_CUTOFF = 4.5
 
-OUTPUT_DIR = "contact_analysis_manuscript2"
+OUTPUT_DIR = "contact_analysis_manuscript2_backup"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Output paths for original figures and data

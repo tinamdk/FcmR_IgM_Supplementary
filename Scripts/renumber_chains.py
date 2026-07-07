@@ -9,7 +9,7 @@ def modify_chains_and_residues(input_pdb, output_pdb, chain_mapping, residue_off
     PDB file
 Parameters:
 input_pdb (str): Path of the input PDB file
-output_pdb (str): Path of the output PDB file
+output_pdb (str): Path of the scripts PDB file
 chain_mapping (dict): Dictionary for chain ID mapping, such as {'A':'X', 'B':'Y'}
 residue_offsets (dict): Dictionary for chain residue offsets, such as {'A':0, 'B':1000}
     """
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     # Verification
     parser = PDBParser()
-    structure = parser.get_structure("output", output_pdb)
+    structure = parser.get_structure("scripts", output_pdb)
     for model in structure:
         for chain in model:
             print(f"Chain {chain.id}:")
